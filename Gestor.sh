@@ -2,6 +2,7 @@
 #!/bin/bash
 
 # Menu principal
+
 echo "================================"
 echo "       MENU DE OPCIONES"
 echo "================================"
@@ -13,29 +14,34 @@ echo "5. Consultar estado de ejecución"
 echo "6. Salir"
 echo "================================"
 
+# Definir variables para los nombres de directorio, imagen y contenedor
 JAVA_DIR="Java"
-IMAGE_NAME="Actividad"
+IMAGE_NAME="actividad"
 CONTAINER_NAME="ContenedorActividad"
 
 # Solicitar opcion al usuario
 read -r -p "Selecciona una opcion (1-6): " opcion
 
-# Ejecutar proceso segun la opcion
+# Ejecutar proceso segun la opcion que el usuario haya seleccionado
 case "$opcion" in
+# valida versiones de java y docker con la linea de comando java --version y docker --version, si no estan instalados, se muestra un mensaje de error y se termina el script    
     1)
         echo "Validando que java y docker esten instalados"
-        java --version
-        if [ $? -ne 0 ]; then
+        if ! command -v java >/dev/null 2>&1; then
             echo "Java no está instalado. Por favor, instálalo antes de continuar."
             exit 1
         fi
-        docker --version
-        if [ $? -ne 0 ]; then
+
+        if ! command -v docker >/dev/null 2>&1; then
             echo "Docker no está instalado. Por favor, instálalo antes de continuar."
             exit 1
         fi
+
+        java --version
+        docker --version
         echo "Java y Docker están instalados correctamente."
         ;;
+# Compila la aplicación Hola.java y genera el archivo Hola.jar, si no se puede compilar, se muestra un mensaje de error y se termina el script  
     2)
         echo "Compilando la aplicación Hola.java"
         cd "$JAVA_DIR" || { echo "Error: No se pudo cambiar al directorio '$JAVA_DIR'."; exit 1; }
@@ -56,6 +62,7 @@ case "$opcion" in
             exit 1
         fi
         ;;
+# Construye la imagen Docker a partir del Dockerfile, valida que se haya ejecutado el paso anterior para .jar, si no se puede construir, se muestra un mensaje de error y se termina el script  
     3)
         echo "Construyendo imagen Docker"
         cd "$JAVA_DIR" || { echo "Error: No se pudo cambiar al directorio '$JAVA_DIR'."; exit 1; }
@@ -70,6 +77,7 @@ case "$opcion" in
         fi
         echo "La imagen Docker '$IMAGE_NAME' se construyó correctamente."
         ;;
+# Ejecuta el contenedor Docker a partir de la imagen construida, valida que se haya ejecutado el paso anterior para .jar y la imagen, si no se puede ejecutar, se muestra un mensaje de error y se termina el script    
     4)
         echo "Ejecutando contenedor Docker"
         cd "$JAVA_DIR" || { echo "Error: No se pudo cambiar al directorio '$JAVA_DIR'."; exit 1; }
@@ -77,7 +85,7 @@ case "$opcion" in
             echo "La imagen Docker '$IMAGE_NAME' no existe. Primero debes construirla con la opción 3."
             exit 1
         fi
-
+# valida por el nombre del contenedor si ya existe uno con el mismo nombre, si es así, pregunta al usuario si desea detenerlo y eliminarlo antes de crear uno nuevo, si el usuario responde afirmativamente, se detiene y elimina el contenedor existente, si responde negativamente, se cancela la ejecución del contenedor. Si el contenedor ya existe pero está detenido, se elimina antes de crear uno nuevo. Luego se ejecuta el contenedor Docker con el nombre especificado y se verifica si se ejecutó correctamente.   
         if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
             if docker ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
                 read -r -p "Ya existe un contenedor con el nombre '$CONTAINER_NAME' ejecutándose. ¿Deseas detenerlo y eliminarlo antes de crear uno nuevo? [s/N]: " respuesta
@@ -136,4 +144,5 @@ case "$opcion" in
         exit 1
         ;;
 esac
+
 echo "Proceso finalizado."
