@@ -12,8 +12,9 @@ En este repositorio se encuentra el entregable para la actividad de Computación
 
 recomendaciones:
 
-Contar con Docker instalado previamente en la maquina donde se ejecute este proyecto
-Proveer permisos de ejecucion al script chmod -x Gestor.sh
-validar Git version para clonar el proyecto en la maquina.
+1. Contar con Docker instalado previamente en la maquina donde se ejecute este proyecto
+2. Proveer permisos de ejecucion al script chmod -x Gestor.sh
+3. Correr comando Dosunix Gestor.sh para evitar conflictos con espacios
+4. validar Git version para clonar el proyecto en la maquina.
 
 Gracias.
