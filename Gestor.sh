@@ -112,7 +112,8 @@ case "$opcion" in
         fi
         echo "El contenedor '$CONTAINER_NAME' se está ejecutando correctamente."
         ;;
-    5)
+# consulta el estado de ejecución del contenedor, la imagen y el archivo .jar, mostrando información relevante como tamaño del .jar, fecha de creación de la imagen y estado del contenedor. Si alguno de estos elementos no existe, se muestra un mensaje indicando su ausencia.
+    5)  
         echo "Consultando estado de ejecución"
         if [ -f "$JAVA_DIR/Hola.jar" ]; then
             echo "Archivo JAR: existe"
@@ -135,6 +136,7 @@ case "$opcion" in
             echo "Contenedor ejecutándose: no"
         fi
         ;;
+# opcion para salir del script, mostrando un mensaje de despedida y terminando la ejecución con un código de salida 0
     6)
         echo "Saliendo...hasta pronto"
         exit 0
